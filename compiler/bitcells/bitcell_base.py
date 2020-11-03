@@ -8,17 +8,41 @@
 
 import debug
 import design
+import utils
+
 from globals import OPTS
 import logical_effort
-from tech import parameter, drc, layer
+from tech import GDS, layer, parameter, drc
 
 
 class bitcell_base(design.design):
     """
     Base bitcell parameters to be over-riden.
     """
+
+    cell_size_layer = "boundary"
+    storage_nets = ['Q', 'Q_bar']
+
+    # Should be overridden by subclass
+    name = NotImplemented
+    pin_names = NotImplemented
+    type_list = NotImplemented
+
     def __init__(self, name):
         design.design.__init__(self, name)
+
+        (width, height) = utils.get_libcell_size(name,
+                                                 GDS["unit"],
+                                                 layer[self.cell_size_layer])
+        pin_map = utils.get_libcell_pins(self.pin_names,
+                                         name,
+                                         GDS["unit"])
+
+        self.width = width
+        self.height = height
+        self.pin_map = pin_map
+        self.add_pin_types(self.type_list)
+        self.nets_match = self.do_nets_exist(self.storage_nets)
 
     def get_stage_effort(self, load):
         parasitic_delay = 1

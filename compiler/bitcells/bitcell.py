@@ -37,26 +37,6 @@ class bitcell(bitcell_base.bitcell_base):
 
     cell_size_layer = "boundary"
 
-    def __init__(self, name=""):
-        if not name:
-            name = self.name
-
-        bitcell_base.bitcell_base.__init__(self, name)
-        debug.info(2, "Create bitcell")
-
-        (width, height) = utils.get_libcell_size(name,
-                                                 GDS["unit"],
-                                                 layer[self.cell_size_layer])
-        pin_map = utils.get_libcell_pins(self.pin_names,
-                                         name,
-                                         GDS["unit"])
-
-        self.width = width
-        self.height = height
-        self.pin_map = pin_map
-        self.add_pin_types(self.type_list)
-        self.nets_match = self.do_nets_exist(self.storage_nets)
-
     def get_all_wl_names(self):
         """ Creates a list of all wordline pin names """
         row_pins = [props.bitcell.cell_6t.pin.wl]
